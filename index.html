@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#0a0e1a" />
+<meta name="description" content="طرح پیشنهادی تأسیس دفتر خدمات فناوری اطلاعات و راهکارهای دیجیتال در سرای محله" />
+<title>طرح پیشنهادی | Parsaco</title>
+
+<!-- PWA -->
+<link rel="manifest" href="./manifest.json" />
+<meta name="application-name" content="Parsaco" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Parsaco" />
+<meta name="mobile-web-app-capable" content="yes" />
+
+<!-- آیکون‌ها -->
+<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png" />
+<link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png" />
+<link rel="apple-touch-icon" href="./icon-192.png" />
+
+<style>
+  /* ===== فونت محلی Vazir FD ===== */
+  @font-face {
+    font-family: 'Vazir FD';
+    src: url('./fonts/Vazir-FD-WOL.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Vazir FD';
+    src: url('./fonts/Vazir-Medium-FD-WOL.woff2') format('woff2');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Vazir FD';
+    src: url('./fonts/Vazir-Bold-FD-WOL.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Vazir FD';
+    src: url('./fonts/Vazir-Bold-FD-WOL.woff2') format('woff2');
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  :root{
+    --bg:#0a0e1a;
+    --surface:rgba(255,255,255,0.04);
+    --surface-2:rgba(255,255,255,0.08);
+    --border:rgba(255,255,255,0.09);
+    --text:#e8eefc;
+    --text-dim:#9aa7c4;
+    --accent:#00d4ff;
+    --accent-2:#7c3aed;
+    --accent-3:#22e0a1;
+    --radius:18px;
+    --shadow:0 20px 60px rgba(0,0,0,.45);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Vazir FD', Tahoma, sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    line-height:1.9;
+    overflow-x:hidden;
+    min-height:100vh;
+  }
+  body::before{
+    content:"";
+    position:fixed;inset:0;
+    background:
+      radial-gradient(900px 500px at 85% -10%, rgba(124,58,237,.28), transparent 60%),
+      radial-gradient(800px 500px at 10% 10%, rgba(0,212,255,.20), transparent 60%),
+      radial-gradient(700px 600px at 50% 110%, rgba(34,224,161,.15), transparent 60%);
+    pointer-events:none;z-index:0;
+  }
+  .latin-nums{
+    font-family: 'Roboto', 'Segoe UI', Tahoma, sans-serif;
+    direction: ltr;
+    unicode-bidi: embed;
+  }
+
+  /* هدر */
+  header.topbar{
+    position:sticky;top:0;z-index:50;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:14px 20px;
+    background:rgba(10,14,26,.72);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+    border-bottom:1px solid var(--border);
+  }
+  .brand{display:flex;align-items:center;gap:12px;font-weight:900;letter-spacing:.5px}
+  .brand .logo{
+    width:38px;height:38px;border-radius:12px;
+    background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    display:grid;place-items:center;font-size:19px;color:#fff;
+    box-shadow:0 8px 24px rgba(0,212,255,.35);
+    overflow:hidden;
+  }
+  .brand .logo img{width:100%;height:100%;object-fit:cover;border-radius:inherit}
+  .brand small{display:block;font-size:10.5px;color:var(--text-dim);font-weight:400;letter-spacing:1.5px}
+  .menu-btn{
+    width:46px;height:46px;border-radius:14px;border:1px solid var(--border);
+    background:var(--surface);display:grid;place-items:center;cursor:pointer;
+    transition:.25s;color:var(--text);
+  }
+  .menu-btn:hover{background:var(--surface-2);border-color:var(--accent)}
+  .menu-btn span{
+    display:block;width:22px;height:2px;background:currentColor;border-radius:2px;
+    transition:.3s;margin:4px 0;
+  }
+  .menu-btn.open span:nth-child(1){transform:translateY(6px) rotate(45deg)}
+  .menu-btn.open span:nth-child(2){opacity:0}
+  .menu-btn.open span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+
+  /* منوی کشویی */
+  .drawer{position:fixed;inset:0;z-index:60;pointer-events:none}
+  .drawer .overlay{
+    position:absolute;inset:0;background:rgba(3,6,15,.6);
+    opacity:0;transition:.35s;backdrop-filter:blur(4px);
+  }
+  .drawer .panel{
+    position:absolute;top:0;right:0;height:100%;width:min(86vw,360px);
+    background:linear-gradient(180deg, rgba(15,20,36,.98), rgba(10,14,26,.98));
+    border-left:1px solid var(--border);
+    transform:translateX(100%);transition:.4s cubic-bezier(.4,0,.2,1);
+    display:flex;flex-direction:column;padding:22px 18px;overflow-y:auto;
+    box-shadow:-30px 0 80px rgba(0,0,0,.5);
+  }
+  .drawer.open{pointer-events:auto}
+  .drawer.open .overlay{opacity:1}
+  .drawer.open .panel{transform:translateX(0)}
+  .drawer h3{font-size:13px;color:var(--text-dim);letter-spacing:2px;margin-bottom:14px;font-weight:500}
+  .drawer nav a{
+    display:flex;align-items:center;gap:12px;
+    padding:13px 14px;border-radius:12px;
+    text-decoration:none;color:var(--text);font-size:14.5px;
+    transition:.2s;border:1px solid transparent;
+  }
+  .drawer nav a:hover{background:var(--surface);border-color:var(--border);transform:translateX(-4px)}
+  .drawer nav a .num{
+    width:26px;height:26px;flex-shrink:0;border-radius:8px;
+    display:grid;place-items:center;font-size:11.5px;font-weight:700;
+    background:linear-gradient(135deg,rgba(0,212,255,.18),rgba(124,58,237,.18));
+    color:var(--accent);border:1px solid rgba(0,212,255,.25);
+  }
+  .drawer .footer{margin-top:auto;padding-top:20px;border-top:1px solid var(--border);font-size:12px;color:var(--text-dim)}
+
+  /* بدنه */
+  main{position:relative;z-index:2;max-width:920px;margin:0 auto;padding:0 20px 80px}
+
+  /* هیرو */
+  .hero{padding:60px 0 30px;text-align:center}
+  .chip{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:8px 16px;border-radius:999px;font-size:12.5px;
+    background:var(--surface);border:1px solid var(--border);
+    color:var(--accent);letter-spacing:.5px;margin-bottom:22px;
+  }
+  .chip .dot{width:7px;height:7px;border-radius:50%;background:var(--accent-3);box-shadow:0 0 12px var(--accent-3);animation:pulse 2s infinite}
+  @keyframes pulse{50%{opacity:.4}}
+  .hero h1{
+    font-size:clamp(24px,5.5vw,40px);font-weight:900;line-height:1.4;
+    background:linear-gradient(135deg,#fff 0%,var(--accent) 60%,var(--accent-2) 100%);
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+    margin-bottom:16px;
+  }
+  .hero p{color:var(--text-dim);font-size:15px;max-width:600px;margin:0 auto 26px}
+  .meta-grid{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+    gap:12px;margin-top:28px;
+  }
+  .meta-card{
+    background:var(--surface);border:1px solid var(--border);
+    border-radius:14px;padding:14px 16px;text-align:right;
+    transition:.25s;
+  }
+  .meta-card:hover{border-color:rgba(0,212,255,.4);transform:translateY(-3px);background:var(--surface-2)}
+  .meta-card .k{font-size:11px;color:var(--text-dim);letter-spacing:1px;margin-bottom:4px}
+  .meta-card .v{font-size:14px;font-weight:700}
+
+  /* بخش‌ها */
+  section{margin-top:56px;scroll-margin-top:90px}
+  .sec-head{display:flex;align-items:center;gap:14px;margin-bottom:24px}
+  .sec-head .idx{
+    font-size:14px;font-weight:900;color:var(--accent);
+    width:44px;height:44px;flex-shrink:0;border-radius:14px;
+    display:grid;place-items:center;
+    background:linear-gradient(135deg,rgba(0,212,255,.16),rgba(124,58,237,.16));
+    border:1px solid rgba(0,212,255,.3);
+    box-shadow:0 0 24px rgba(0,212,255,.15);
+  }
+  .sec-head h2{font-size:clamp(18px,3.8vw,24px);font-weight:900;letter-spacing:.3px}
+  .card{
+    background:linear-gradient(180deg,var(--surface),rgba(255,255,255,.015));
+    border:1px solid var(--border);border-radius:var(--radius);
+    padding:24px;box-shadow:var(--shadow);
+    transition:.3s;
+  }
+  .card:hover{border-color:rgba(0,212,255,.25)}
+  .card p{color:#c6d0e6;font-size:14.5px;margin-bottom:12px}
+  .card p:last-child{margin-bottom:0}
+  .card strong{color:var(--accent)}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+  .mini{
+    background:var(--surface);border:1px solid var(--border);
+    border-radius:16px;padding:18px;transition:.25s;position:relative;overflow:hidden;
+  }
+  .mini::before{
+    content:"";position:absolute;top:0;right:0;width:60px;height:60px;
+    background:radial-gradient(circle,rgba(0,212,255,.18),transparent 70%);
+  }
+  .mini:hover{transform:translateY(-4px);border-color:rgba(0,212,255,.4);background:var(--surface-2)}
+  .mini h4{font-size:15px;margin-bottom:10px;color:var(--accent);display:flex;align-items:center;gap:8px}
+  .mini h4 .ico{font-size:18px}
+  .mini ul{list-style:none;padding:0}
+  .mini li{font-size:13px;color:#b8c3dd;padding:5px 0 5px 0;position:relative;padding-right:16px}
+  .mini li::before{
+    content:"";position:absolute;right:0;top:13px;width:6px;height:6px;
+    border-radius:50%;background:var(--accent-3);opacity:.7;
+  }
+  .mini .note{
+    margin-top:12px;font-size:11.5px;color:var(--text-dim);
+    padding-top:10px;border-top:1px dashed var(--border);
+  }
+
+  .levels{display:grid;gap:12px}
+  .level{
+    display:flex;gap:16px;align-items:flex-start;
+    background:var(--surface);border:1px solid var(--border);
+    border-radius:14px;padding:16px 18px;
+  }
+  .level .badge{
+    flex-shrink:0;width:38px;height:38px;border-radius:10px;
+    display:grid;place-items:center;font-weight:900;font-size:14px;
+    background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;
+  }
+  .level h5{font-size:14px;margin-bottom:4px;color:#fff}
+  .level p{font-size:13px;color:var(--text-dim);margin:0}
+
+  .goals{list-style:none;padding:0;display:grid;gap:10px}
+  .goals li{
+    background:var(--surface);border:1px solid var(--border);
+    border-radius:12px;padding:13px 16px;font-size:13.5px;
+    display:flex;gap:12px;align-items:flex-start;transition:.2s;
+  }
+  .goals li:hover{background:var(--surface-2);border-color:rgba(0,212,255,.25)}
+  .goals li .n{
+    flex-shrink:0;width:24px;height:24px;border-radius:7px;
+    background:rgba(0,212,255,.12);color:var(--accent);
+    display:grid;place-items:center;font-size:11px;font-weight:700;
+  }
+
+  .cta{
+    margin-top:56px;position:relative;overflow:hidden;
+    background:linear-gradient(135deg,rgba(0,212,255,.14),rgba(124,58,237,.18));
+    border:1px solid rgba(0,212,255,.3);border-radius:22px;
+    padding:36px 26px;text-align:center;
+  }
+  .cta h3{font-size:20px;font-weight:900;margin-bottom:12px}
+  .cta p{color:#c6d0e6;font-size:14px;max-width:520px;margin:0 auto 22px}
+  .cta-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:12px 24px;border-radius:12px;text-decoration:none;
+    font-size:14px;font-weight:700;transition:.25s;border:1px solid transparent;
+  }
+  .btn.primary{
+    background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    color:#fff;box-shadow:0 10px 30px rgba(0,212,255,.35);
+  }
+  .btn.primary:hover{transform:translateY(-3px);box-shadow:0 16px 40px rgba(0,212,255,.5)}
+  .btn.ghost{background:var(--surface);border-color:var(--border);color:var(--text)}
+  .btn.ghost:hover{background:var(--surface-2);border-color:var(--accent)}
+
+  footer{
+    margin-top:64px;padding:32px 20px;text-align:center;
+    border-top:1px solid var(--border);color:var(--text-dim);font-size:12.5px;
+  }
+  footer .sig{font-weight:700;color:var(--text);font-size:14px;margin-bottom:6px}
+  footer a{color:var(--accent);text-decoration:none}
+
+  .progress{position:fixed;top:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent-2));z-index:100;width:0;transition:width .1s}
+  .fab{
+    position:fixed;bottom:22px;left:22px;z-index:40;
+    width:48px;height:48px;border-radius:14px;border:1px solid var(--border);
+    background:rgba(15,20,36,.85);backdrop-filter:blur(10px);
+    color:var(--accent);display:grid;place-items:center;cursor:pointer;
+    opacity:0;transform:translateY(20px);transition:.3s;pointer-events:none;
+    box-shadow:var(--shadow);
+  }
+  .fab.show{opacity:1;transform:translateY(0);pointer-events:auto}
+  .fab:hover{border-color:var(--accent);background:rgba(0,212,255,.12)}
+  .reveal{opacity:0;transform:translateY(24px);transition:.7s cubic-bezier(.2,.7,.2,1)}
+  .reveal.in{opacity:1;transform:translateY(0)}
+
+  @media(max-width:520px){
+    main{padding:0 14px 60px}
+    .card{padding:18px}
+    .mini{padding:16px}
+    header.topbar{padding:12px 14px}
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none!important;transition:none!important}
+    html{scroll-behavior:auto}
+  }
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="logo">
+      <img src="./icon-192.png" alt="Parsaco" onerror="this.style.display='none';this.parentNode.textContent='P';" />
+    </div>
+    <div>Parsaco<small>DIGITAL SOLUTIONS</small></div>
+  </div>
+  <button class="menu-btn" id="menuBtn" aria-label="باز کردن منو" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+</header>
+
+<div class="drawer" id="drawer">
+  <div class="overlay" id="overlay"></div>
+  <aside class="panel" role="navigation" aria-label="منوی اصلی">
+    <h3>فهرست طرح</h3>
+    <nav id="drawerNav">
+      <a href="#s1"><span class="num">۰۱</span> مقدمه و ضرورت</a>
+      <a href="#s2"><span class="num">۰۲</span> معرفی مجری</a>
+      <a href="#s3"><span class="num">۰۳</span> اهداف اصلی</a>
+      <a href="#s4"><span class="num">۰۴</span> خدمات به شهروندان</a>
+      <a href="#s5"><span class="num">۰۵</span> خدمات ویژه سرای محله</a>
+      <a href="#s6"><span class="num">۰۶</span> مسئولیت اجتماعی</a>
+      <a href="#s7"><span class="num">۰۷</span> جامعه هدف</a>
+      <a href="#s8"><span class="num">۰۸</span> مدل فعالیت و پایداری</a>
+      <a href="#s9"><span class="num">۰۹</span> امکانات و الزامات</a>
+      <a href="#s10"><span class="num">۱۰</span> برنامه اجرای طرح</a>
+      <a href="#s11"><span class="num">۱۱</span> تعهدات مجری</a>
+      <a href="#s12"><span class="num">۱۲</span> شاخص‌های ارزیابی</a>
+      <a href="#s13"><span class="num">۱۳</span> مزایای همکاری</a>
+      <a href="#s14"><span class="num">۱۴</span> درخواست رسمی</a>
+      <a href="#s15"><span class="num">۱۵</span> جمع‌بندی</a>
+    </nav>
+    <div class="footer">Parsaco • محمد خلیلی‌پارسا<br><span class="latin-nums">09125907509</span></div>
+  </aside>
+</div>
+
+<main>
+
+  <section class="hero reveal">
+    <div class="chip"><span class="dot"></span> طرح پیشنهادی همکاری با سرای محله</div>
+    <h1>دفتر خدمات فناوری اطلاعات و راهکارهای دیجیتال</h1>
+    <p>ترکیبی از فعالیت تخصصی و درآمدزا، خدمات عمومی به شهروندان، حمایت از کسب‌وکارهای کوچک و همکاری کاربردی با مدیریت سرای محله.</p>
+    <div class="meta-grid">
+      <div class="meta-card"><div class="k">مجری طرح</div><div class="v">محمد خلیلی‌پارسا</div></div>
+      <div class="meta-card"><div class="k">تاریخ ارائه</div><div class="v">۴ آبان ۱۴۰۵</div></div>
+      <div class="meta-card"><div class="k">محل اجرا</div><div class="v">فضای اداری سرای محله</div></div>
+      <div class="meta-card"><div class="k">تماس</div><div class="v"><span class="latin-nums">09125907509</span></div></div>
+    </div>
+  </section>
+
+  <section id="s1" class="reveal">
+    <div class="sec-head"><div class="idx">۰۱</div><h2>مقدمه و ضرورت اجرای طرح</h2></div>
+    <div class="card">
+      <p>با گسترش فناوری اطلاعات در زندگی روزمره، کسب‌وکارها، آموزش و خدمات، نیاز شهروندان و مجموعه‌های اداری به خدمات فنی، پشتیبانی رایانه و راهکارهای دیجیتال بیش از گذشته احساس می‌شود.</p>
+      <p>سرای محله به‌عنوان یکی از مراکز ارتباطی و خدماتی جامعه محلی، ظرفیت مناسبی برای میزبانی فعالیت‌هایی دارد که ضمن <strong>ایجاد اشتغال و فعالیت اقتصادی</strong>، به رفع بخشی از نیازهای شهروندان کمک می‌کنند.</p>
+      <p>این طرح با هدف راه‌اندازی یک دفتر تخصصی در یکی از فضاهای قابل واگذاری سرای محله تدوین شده و آمادگی دارد بخشی از نیازهای فنی، نرم‌افزاری و دیجیتال خود سرا را نیز پوشش دهد.</p>
+    </div>
+  </section>
+
+  <section id="s2" class="reveal">
+    <div class="sec-head"><div class="idx">۰۲</div><h2>معرفی مجری طرح</h2></div>
+    <div class="card">
+      <p>اینجانب <strong>محمد خلیلی‌پارسا</strong>، با تمرکز بر حوزه فناوری اطلاعات و خدمات رایانه‌ای، پیشنهاد راه‌اندازی دفتر خدمات فناوری اطلاعات و راهکارهای دیجیتال را با هدف ارائه خدمات فنی، نرم‌افزاری، شبکه‌ای، طراحی وب و گرافیک مطرح می‌کنم.</p>
+      <p>زمینه‌های فعالیت شامل طراحی و راه‌اندازی وب‌سایت، توسعه وب‌اپلیکیشن، خدمات شبکه، نصب و پیکربندی نرم‌افزار، عیب‌یابی و ارتقای سخت‌افزار، طراحی لوگو و بنر و مشاوره فناوری اطلاعات است.</p>
+      <p>این طرح با رویکرد <strong>شروع در مقیاس کوچک، استفاده بهینه از امکانات موجود و توسعه تدریجی</strong> تدوین شده است.</p>
+    </div>
+  </section>
+
+  <section id="s3" class="reveal">
+    <div class="sec-head"><div class="idx">۰۳</div><h2>اهداف اصلی طرح</h2></div>
+    <ul class="goals">
+      <li><span class="n">۱</span> دسترسی آسان‌تر شهروندان به خدمات فناوری اطلاعات با هزینه مناسب.</li>
+      <li><span class="n">۲</span> رفع مشکلات سخت‌افزاری، نرم‌افزاری و شبکه‌ای تجهیزات دیجیتال.</li>
+      <li><span class="n">۳</span> حمایت از کسب‌وکارهای کوچک برای ورود به فضای اینترنت.</li>
+      <li><span class="n">۴</span> ارائه خدمات تخصصی فناوری اطلاعات به سرای محله.</li>
+      <li><span class="n">۵</span> بهبود ابزارهای دیجیتال فعالیت‌های اداری، فرهنگی و اطلاع‌رسانی سرا.</li>
+      <li><span class="n">۶</span> افزایش آگاهی شهروندان درباره استفاده صحیح و ایمن از فناوری.</li>
+      <li><span class="n">۷</span> برگزاری برنامه‌های آموزشی کوتاه و کاربردی.</li>
+      <li><span class="n">۸</span> استفاده بهینه از فضاهای قابل واگذاری شهری.</li>
+      <li><span class="n">۹</span> ایجاد بستر همکاری مستمر میان فعالان فناوری، مدیریت شهری و جامعه محلی.</li>
+    </ul>
+  </section>
+
+  <section id="s4" class="reveal">
+    <div class="sec-head"><div class="idx">۰۴</div><h2>خدمات به شهروندان و کسب‌وکارها</h2></div>
+    <div class="grid">
+      <div class="mini">
+        <h4><span class="ico">🌐</span> طراحی و پشتیبانی وب‌سایت</h4>
+        <ul>
+          <li>طراحی سایت با WordPress</li>
+          <li>راه‌اندازی فروشگاه اینترنتی</li>
+          <li>پشتیبانی و به‌روزرسانی</li>
+          <li>مشاوره دامنه و میزبانی</li>
+        </ul>
+        <div class="note">هدف محله‌ای: توسعه حضور آنلاین کسب‌وکارهای کوچک</div>
+      </div>
+      <div class="mini">
+        <h4><span class="ico">⚙️</span> توسعه وب‌اپلیکیشن</h4>
+        <ul>
+          <li>وب‌اپلیکیشن اختصاصی</li>
+          <li>سامانه‌های تحت وب</li>
+          <li>PWA قابل نصب روی موبایل</li>
+          <li>ابزارهای ثبت درخواست</li>
+        </ul>
+        <div class="note">هدف محله‌ای: راهکارهای دیجیتال متناسب با نیاز محلی</div>
+      </div>
+      <div class="mini">
+        <h4><span class="ico">🔗</span> خدمات شبکه و زیرساخت</h4>
+        <ul>
+          <li>شبکه‌های کوچک خانگی و اداری</li>
+          <li>اشتراک‌گذاری فایل و چاپگر</li>
+          <li>پیکربندی مودم و روتر</li>
+          <li>عیب‌یابی اتصال به اینترنت</li>
+        </ul>
+        <div class="note">شبکه‌های حساس پس از بررسی فنی</div>
+      </div>
+      <div class="mini">
+        <h4><span class="ico">💻</span> عیب‌یابی و ارتقای سخت‌افزار</h4>
+        <ul>
+          <li>عیب‌یابی رایانه و لپ‌تاپ</li>
+          <li>ارتقای RAM و حافظه</li>
+          <li>تعویض قطعات قابل جایگزینی</li>
+          <li>مشاوره خرید و نگهداری</li>
+        </ul>
+        <div class="note">برآورد هزینه پیش از تعمیر</div>
+      </div>
+      <div class="mini">
+        <h4><span class="ico">📦</span> نصب و پشتیبانی نرم‌افزار</h4>
+        <ul>
+          <li>نصب سیستم‌عامل و درایور</li>
+          <li>نرم‌افزارهای کاربردی مجاز</li>
+          <li>پشتیبان‌گیری و انتقال اطلاعات</li>
+          <li>آموزش نگهداری اولیه</li>
+        </ul>
+        <div class="note">رعایت حقوق مالکیت فکری</div>
+      </div>
+      <div class="mini">
+        <h4><span class="ico">🎨</span> طراحی گرافیک و بصری</h4>
+        <ul>
+          <li>طراحی لوگو و هویت بصری</li>
+          <li>بنر تبلیغاتی و اطلاع‌رسانی</li>
+          <li>تصاویر وب‌سایت و شبکه‌های اجتماعی</li>
+          <li>محتوای بصری کسب‌وکارهای محلی</li>
+        </ul>
+        <div class="note">هدف محله‌ای: معرفی حرفه‌ای‌تر مشاغل</div>
+      </div>
+      <div class="mini">
+        <h4><span class="ico">📚</span> مشاوره و آموزش کاربردی</h4>
+        <ul>
+          <li>نگهداری صحیح رایانه</li>
+          <li>پشتیبان‌گیری از اطلاعات</li>
+          <li>امنیت حساب‌های کاربری</li>
+          <li>تشخیص پیام‌های مشکوک</li>
+        </ul>
+        <div class="note">کارگاه‌ها با هماهنگی سرای محله</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="s5" class="reveal">
+    <div class="sec-head"><div class="idx">۰۵</div><h2>خدمات ویژه سرای محله</h2></div>
+    <div class="card" style="margin-bottom:16px">
+      <p>هدف از این بخش، ایجاد یک رابطه همکاری متقابل است که در آن، دفتر ضمن بهره‌مندی از فضای مناسب برای فعالیت، بتواند در رفع نیازهای فنی و دیجیتال مجموعه نیز نقش مؤثری داشته باشد. نوع خدمات، حدود مسئولیت، زمان‌بندی و هزینه احتمالی هر مورد با توافق مدیریت تعیین خواهد شد.</p>
+    </div>
+    <div class="grid">
+      <div class="mini">
+        <h4><span class="ico">🖥️</span> پشتیبانی رایانه‌ها و تجهیزات اداری</h4>
+        <ul>
+          <li>عیب‌یابی اولیه رایانه‌های سرا</li>
+          <li>رفع مشکلات نرم‌افزاری و سیستم‌عامل</li>
+          <li>نصب چاپگر و تجهیزات جانبی</li>
+          <li>مشاوره ارتقا و جایگزینی تجهیزات</li>
+        </ul>
+      </div>
+      <div class="mini">
+        <h4><span class="ico">📡</span> پشتیبانی شبکه و ارتباطات</h4>
+        <ul>
+          <li>بررسی مشکلات اتصال به اینترنت</li>
+          <li>پیکربندی اولیه شبکه داخلی</li>
+          <li>اشتراک‌گذاری فایل و چاپگر</li>
+          <li>مشاوره تجهیزات شبکه</li>
+        </ul>
+      </div>
+      <div class="mini">
+        <h4><span class="ico">🌐</span> طراحی و پشتیبانی وب‌سایت سرا</h4>
+        <ul>
+          <li>طراحی/بازطراحی وب‌سایت معرفی خدمات</li>
+          <li>به‌روزرسانی محتوا با مجوز</li>
+          <li>فرم‌های ثبت درخواست ساده</li>
+          <li>بهبود دسترسی شهروندان به اطلاعات</li>
+        </ul>
+      </div>
+      <div class="mini">
+        <h4><span class="ico">🖌️</span> طراحی گرافیک و اقلام اطلاع‌رسانی</h4>
+        <ul>
+          <li>بنر برنامه‌های فرهنگی و آموزشی</li>
+          <li>پوستر رویدادهای سرا</li>
+          <li>تصاویر دیجیتال معرفی خدمات</li>
+          <li>مشاوره بهبود محتوای بصری</li>
+        </ul>
+      </div>
+      <div class="mini">
+        <h4><span class="ico">🗂️</span> سامان‌دهی فایل‌ها و اطلاعات اداری</h4>
+        <ul>
+          <li>ساختار پوشه‌ها و نام‌گذاری استاندارد</li>
+          <li>روش‌های پشتیبان‌گیری از اسناد</li>
+          <li>مدیریت دسترسی کاربران</li>
+          <li>طراحی فرم‌های اداری کاربردی</li>
+        </ul>
+        <div class="note">دسترسی به اطلاعات محرمانه فقط با مجوز مسئول</div>
+      </div>
+      <div class="mini">
+        <h4><span class="ico">💡</span> مشاوره توسعه خدمات دیجیتال</h4>
+        <ul>
+          <li>شناسایی نیازهای دیجیتال</li>
+          <li>راهکارهای کم‌هزینه بهبود فرایند</li>
+          <li>انتخاب تجهیزات و نرم‌افزار</li>
+          <li>بهبود اطلاع‌رسانی به شهروندان</li>
+        </ul>
+      </div>
+      <div class="mini">
+        <h4><span class="ico">🎓</span> همکاری در برنامه‌های آموزشی</h4>
+        <ul>
+          <li>کارگاه سواد دیجیتال</li>
+          <li>آموزش نگهداری رایانه</li>
+          <li>آشنایی با امنیت دیجیتال</li>
+          <li>ابزارهای دیجیتال برای مشاغل</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <p><strong>چارچوب ارائه خدمات به سرای محله:</strong> به‌منظور شفافیت و جلوگیری از ایجاد تعهدات نامشخص، خدمات در سه سطح بررسی می‌شوند:</p>
+    </div>
+    <div class="levels" style="margin-top:12px">
+      <div class="level">
+        <div class="badge">۱</div>
+        <div><h5>خدمات محدود و توافق‌شده</h5><p>بررسی‌های اولیه، مشاوره‌های کوتاه یا راهنمایی‌های فنی در چارچوب توافق اولیه.</p></div>
+      </div>
+      <div class="level">
+        <div class="badge">۲</div>
+        <div><h5>خدمات اجرایی و مستمر</h5><p>پشتیبانی دوره‌ای، تعمیرات، طراحی اقلام گرافیکی مستمر یا خدمات نیازمند زمان و منابع مشخص.</p></div>
+      </div>
+      <div class="level">
+        <div class="badge">۳</div>
+        <div><h5>پروژه‌های تخصصی</h5><p>طراحی وب‌سایت، توسعه سامانه اختصاصی، تغییرات زیرساختی یا پروژه‌های نیازمند برنامه‌ریزی و برآورد مستقل.</p></div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <p style="font-size:13px;color:var(--text-dim)">شرح خدمات هر سطح، هزینه احتمالی، دفعات ارائه و زمان پاسخ‌گویی، حسب مورد و با توافق مکتوب طرفین مشخص خواهد شد. واگذاری فضا به‌خودی‌خود به معنای تعهد نامحدود مجری به ارائه خدمات رایگان یا پشتیبانی شبانه‌روزی نخواهد بود.</p>
+    </div>
+  </section>
+
+  <section id="s6" class="reveal">
+    <div class="sec-head"><div class="idx">۰۶</div><h2>مسئولیت اجتماعی دفتر</h2></div>
+    <div class="grid">
+      <div class="mini">
+        <h4>💬 مشاوره اولیه رایگان</h4>
+        <p style="font-size:13px;color:#b8c3dd">ارائه مشاوره کوتاه در زمینه مشکلات رایانه‌ای، انتخاب تجهیزات، نیازهای وب‌سایت و راهکارهای دیجیتال، در چارچوب زمان‌بندی و ظرفیت دفتر.</p>
+        <div class="note">به معنای تعهد به تعمیر رایگان یا اجرای پروژه تخصصی نیست.</div>
+      </div>
+      <div class="mini">
+        <h4>📖 آموزش‌های کوتاه و کاربردی</h4>
+        <p style="font-size:13px;color:#b8c3dd">برگزاری برنامه‌های آموزشی با هماهنگی مدیریت سرا: نگهداری رایانه، امنیت دیجیتال، مزایای حضور آنلاین، ابزارهای کاربردی دیجیتال.</p>
+      </div>
+      <div class="mini">
+        <h4>🏪 حمایت از مشاغل کوچک</h4>
+        <p style="font-size:13px;color:#b8c3dd">مشاوره اولیه به فروشگاه‌ها، مشاغل خانگی و کسب‌وکارهای کوچک درباره نیازهای دیجیتال، طراحی وب‌سایت، تبلیغات گرافیکی، شبکه و راهکارهای کم‌هزینه.</p>
+      </div>
+      <div class="mini">
+        <h4>🤝 همکاری با برنامه‌های فرهنگی</h4>
+        <p style="font-size:13px;color:#b8c3dd">مشارکت تخصصی در برنامه‌های عمومی و فعالیت‌های مرتبط با فناوری اطلاعات و سواد دیجیتال، در صورت توافق.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="s7" class="reveal">
+    <div class="sec-head"><div class="idx">۰۷</div><h2>جامعه هدف</h2></div>
+    <div class="card">
+      <p>خدمات دفتر برای گروه‌های زیر در نظر گرفته شده است:</p>
+      <ul style="list-style:none;padding:0;display:grid;gap:8px;margin-top:12px">
+        <li style="padding:10px 14px;background:var(--surface);border-radius:10px;font-size:13.5px">۱. ساکنان و خانواده‌ها</li>
+        <li style="padding:10px 14px;background:var(--surface);border-radius:10px;font-size:13.5px">۲. دانش‌آموزان، دانشجویان و علاقه‌مندان به مهارت‌های دیجیتال</li>
+        <li style="padding:10px 14px;background:var(--surface);border-radius:10px;font-size:13.5px">۳. صاحبان فروشگاه‌ها، مشاغل خانگی و کسب‌وکارهای کوچک</li>
+        <li style="padding:10px 14px;background:var(--surface);border-radius:10px;font-size:13.5px">۴. دفاتر و مجموعه‌های خدماتی</li>
+        <li style="padding:10px 14px;background:var(--surface);border-radius:10px;font-size:13.5px">۵. افرادی که برای عیب‌یابی، تعمیر یا ارتقای رایانه به خدمات فنی نیاز دارند</li>
+        <li style="padding:10px 14px;background:var(--surface);border-radius:10px;font-size:13.5px">۶. مجموعه‌های فرهنگی و آموزشی متقاضی راهکارهای دیجیتال</li>
+        <li style="padding:10px 14px;background:var(--surface);border-radius:10px;font-size:13.5px">۷. سرای محله و سایر مجموعه‌هایی که در چارچوب توافق به خدمات فناوری اطلاعات نیاز دارند</li>
+      </ul>
+      <p style="margin-top:16px">فعالیت دفتر به محدوده جغرافیایی خاصی محدود نخواهد بود و امکان ارائه خدمات حضوری، پروژه‌ای یا غیرحضوری وجود خواهد داشت.</p>
+    </div>
+  </section>
+
+  <section id="s8" class="reveal">
+    <div class="sec-head"><div class="idx">۰۸</div><h2>مدل فعالیت و پایداری اقتصادی</h2></div>
+    <div class="card">
+      <p><strong>محور اول: خدمات تخصصی و درآمدزا</strong></p>
+      <p>شامل طراحی وب‌سایت، توسعه وب‌اپلیکیشن، خدمات شبکه، عیب‌یابی و ارتقای سخت‌افزار، نصب و پشتیبانی نرم‌افزار و طراحی گرافیک. درآمد این بخش برای پوشش هزینه‌های اجاره، تجهیزات، ملزومات، توسعه فعالیت و استمرار خدمات استفاده خواهد شد.</p>
+      <p style="margin-top:16px"><strong>محور دوم: خدمات عمومی و همکاری محله‌ای</strong></p>
+      <p>شامل مشاوره اولیه، آموزش‌های کاربردی و مشارکت در فعالیت‌های مورد توافق با سرای محله. این بخش با هدف افزایش دسترسی شهروندان به دانش و خدمات فناوری اطلاعات و تقویت ارتباط دفتر با جامعه محلی اجرا خواهد شد.</p>
+      <p style="margin-top:16px">ترکیب این دو محور می‌تواند زمینه فعالیتی پایدار را فراهم کند که ضمن برخورداری از مدل اقتصادی مشخص، برای سرای محله و شهروندان نیز ارزش عملی ایجاد کند.</p>
+    </div>
+  </section>
+
+  <section id="s9" class="reveal">
+    <div class="sec-head"><div class="idx">۰۹</div><h2>امکانات و الزامات اجرایی</h2></div>
+    <div class="card">
+      <p>برای آغاز فعالیت، فراهم‌بودن یک فضای اداری مناسب با امکانات اولیه ضروری است:</p>
+      <ul style="list-style:none;padding:0;display:grid;gap:8px;margin-top:12px">
+        <li style="padding:10px 14px;background:var(--surface);border-radius:10px;font-size:13.5px">✓ فضای مناسب برای استقرار تجهیزات و انجام امور اداری</li>
+        <li style="padding:10px 14px;background:var(--surface);border-radius:10px;font-size:13.5px">✓ امکان استفاده از برق و اینترنت</li>
+        <li style="padding:10px 14px;background:var(--surface);border-radius:10px;font-size:13.5px">✓ دسترسی متعارف به امکانات عمومی ساختمان</li>
+        <li style="padding:10px 14px;background:var(--surface);border-radius:10px;font-size:13.5px">✓ امکان نگهداری ابزارها و تجهیزات مورد نیاز</li>
+        <li style="padding:10px 14px;background:var(--surface);border-radius:10px;font-size:13.5px">✓ امکان پذیرش مراجعه‌کنندگان در ساعات توافق‌شده</li>
+        <li style="padding:10px 14px;background:var(--surface);border-radius:10px;font-size:13.5px">✓ امکان نصب تابلو یا معرفی‌نامه فعالیت، در صورت اخذ مجوزهای لازم</li>
+      </ul>
+      <p style="margin-top:16px">تجهیزات تخصصی و سایر ملزومات به‌تدریج و متناسب با نیاز واقعی خدمات تأمین خواهند شد. تمام فعالیت‌ها در محدوده مجوزهای صادرشده، مقررات ایمنی، ضوابط ساختمان و شرایط مورد توافق با مدیریت سرا انجام خواهد شد.</p>
+    </div>
+  </section>
+
+  <section id="s10" class="reveal">
+    <div class="sec-head"><div class="idx">۱۰</div><h2>برنامه پیشنهادی اجرای طرح</h2></div>
+    <div class="card">
+      <p><strong>مرحله اول: استقرار و آماده‌سازی</strong></p>
+      <p>تعیین فضای مناسب و توافق درباره شرایط واگذاری • آماده‌سازی تجهیزات و میز کار • تدوین فهرست خدمات و تعرفه‌های پیشنهادی • تعیین ساعات فعالیت و روش ثبت درخواست‌ها • بررسی اولیه نیازهای فنی سرای محله • آماده‌سازی معرفی‌نامه و راه ارتباطی با شهروندان</p>
+      <p style="margin-top:16px"><strong>مرحله دوم: آغاز فعالیت</strong></p>
+      <p>شروع ارائه خدمات تخصصی • معرفی دفتر به شهروندان و کسب‌وکارها • شناسایی نیازهای رایج مراجعه‌کنندگان • بررسی نیازهای اولیه فناوری اطلاعات سرا • برنامه‌ریزی نخستین فعالیت آموزشی مورد توافق</p>
+      <p style="margin-top:16px"><strong>مرحله سوم: تثبیت و توسعه</strong></p>
+      <p>بررسی میزان استقبال از خدمات • توسعه تدریجی خدمات بر اساس نیاز و توان اجرایی • استمرار برنامه‌های عمومی مورد توافق • بررسی نیازهای جدید سرای محله • ارزیابی کیفیت خدمات و رضایت مراجعه‌کنندگان • ارائه گزارش مختصر عملکرد در دوره‌های توافق‌شده</p>
+      <p style="margin-top:16px;color:var(--text-dim);font-size:13px">زمان‌بندی نهایی مراحل پس از تعیین شرایط واگذاری و امکانات در دسترس مشخص خواهد شد.</p>
+    </div>
+  </section>
+
+  <section id="s11" class="reveal">
+    <div class="sec-head"><div class="idx">۱۱</div><h2>تعهدات پیشنهادی مجری طرح</h2></div>
+    <ul class="goals">
+      <li><span class="n">۱</span> استفاده از فضای واگذارشده صرفاً در محدوده فعالیت‌های مورد توافق.</li>
+      <li><span class="n">۲</span> رعایت نظم، نظافت، مقررات ایمنی و ضوابط عمومی مجموعه.</li>
+      <li><span class="n">۳</span> اعلام شفاف هزینه‌ها و اخذ تأیید مشتری پیش از انجام خدمات هزینه‌بر.</li>
+      <li><span class="n">۴</span> رعایت محرمانگی اطلاعات، فایل‌ها، رمزهای عبور و داده‌های مراجعه‌کنندگان.</li>
+      <li><span class="n">۵</span> رعایت قوانین و مقررات مرتبط با نرم‌افزار و خدمات فناوری اطلاعات.</li>
+      <li><span class="n">۶</span> تعیین ساعات فعالیت و نحوه مراجعه با هماهنگی مدیریت.</li>
+      <li><span class="n">۷</span> همکاری در برنامه‌های عمومی و آموزشی مورد توافق.</li>
+      <li><span class="n">۸</span> ارائه گزارش دوره‌ای از فعالیت‌های محله‌محور در صورت توافق طرفین.</li>
+      <li><span class="n">۹</span> استفاده مسئولانه از فضای واگذارشده و امکانات عمومی.</li>
+      <li><span class="n">۱۰</span> انجام خدمات مربوط به سرای محله در محدوده شرح خدمات و تعهدات مورد توافق.</li>
+      <li><span class="n">۱۱</span> خودداری از دسترسی به اطلاعات و تجهیزات بدون مجوز مسئول مربوطه.</li>
+      <li><span class="n">۱۲</span> پذیرش تعهدات مالی و اجرایی صرفاً در حدود توافق مکتوب طرفین.</li>
+    </ul>
+  </section>
+
+  <section id="s12" class="reveal">
+    <div class="sec-head"><div class="idx">۱۲</div><h2>شاخص‌های ارزیابی عملکرد</h2></div>
+    <div class="card">
+      <p>به‌منظور ارزیابی میزان موفقیت طرح، می‌توان شاخص‌های زیر را به‌صورت ماهانه یا فصلی بررسی کرد:</p>
+      <ul style="list-style:none;padding:0;display:grid;gap:8px;margin-top:12px">
+        <li style="padding:8px 14px;background:var(--surface);border-radius:10px;font-size:13.5px">• تعداد درخواست‌های پاسخ‌داده‌شده از سوی شهروندان</li>
+        <li style="padding:8px 14px;background:var(--surface);border-radius:10px;font-size:13.5px">• تعداد خدمات تخصصی ارائه‌شده</li>
+        <li style="padding:8px 14px;background:var(--surface);border-radius:10px;font-size:13.5px">• تعداد کسب‌وکارهای محلی دریافت‌کننده مشاوره</li>
+        <li style="padding:8px 14px;background:var(--surface);border-radius:10px;font-size:13.5px">• تعداد برنامه‌ها و کارگاه‌های آموزشی برگزارشده</li>
+        <li style="padding:8px 14px;background:var(--surface);border-radius:10px;font-size:13.5px">• میزان رضایت مراجعه‌کنندگان بر اساس بازخوردهای دریافتی</li>
+        <li style="padding:8px 14px;background:var(--surface);border-radius:10px;font-size:13.5px">• تعداد درخواست‌های فنی سرای محله که در چارچوب توافق رسیدگی شده‌اند</li>
+        <li style="padding:8px 14px;background:var(--surface);border-radius:10px;font-size:13.5px">• میزان استمرار فعالیت و توانایی تأمین هزینه‌های جاری</li>
+      </ul>
+      <p style="margin-top:16px;color:var(--text-dim);font-size:13px">اهداف کمی هر شاخص پس از مشخص‌شدن ظرفیت دفتر و توافق با مدیریت تعیین خواهد شد.</p>
+    </div>
+  </section>
+
+  <section id="s13" class="reveal">
+    <div class="sec-head"><div class="idx">۱۳</div><h2>مزایای همکاری برای سرای محله</h2></div>
+    <div class="card">
+      <p>اجرای طرح می‌تواند زمینه بهره‌مندی از مزایای زیر را فراهم کند:</p>
+      <ul style="list-style:none;padding:0;display:grid;gap:8px;margin-top:12px">
+        <li style="padding:8px 14px;background:var(--surface);border-radius:10px;font-size:13.5px">✦ استفاده هدفمند از فضای اداری قابل واگذاری</li>
+        <li style="padding:8px 14px;background:var(--surface);border-radius:10px;font-size:13.5px">✦ افزایش تنوع خدمات کاربردی در دسترس شهروندان</li>
+        <li style="padding:8px 14px;background:var(--surface);border-radius:10px;font-size:13.5px">✦ فراهم‌شدن امکان مشاوره و آموزش فناوری اطلاعات</li>
+        <li style="padding:8px 14px;background:var(--surface);border-radius:10px;font-size:13.5px">✦ کمک به توسعه دیجیتال مشاغل کوچک</li>
+        <li style="padding:8px 14px;background:var(--surface);border-radius:10px;font-size:13.5px">✦ دسترسی به خدمات تخصصی رایانه و شبکه در چارچوب توافق</li>
+        <li style="padding:8px 14px;background:var(--surface);border-radius:10px;font-size:13.5px">✦ امکان طراحی و به‌روزرسانی اقلام گرافیکی اطلاع‌رسانی</li>
+        <li style="padding:8px 14px;background:var(--surface);border-radius:10px;font-size:13.5px">✦ دریافت مشاوره اولیه برای بهبود فرایندهای دیجیتال مجموعه</li>
+        <li style="padding:8px 14px;background:var(--surface);border-radius:10px;font-size:13.5px">✦ ایجاد زمینه همکاری میان فعالان فناوری، مدیریت شهری و جامعه محلی</li>
+        <li style="padding:8px 14px;background:var(--surface);border-radius:10px;font-size:13.5px">✦ امکان توسعه تدریجی خدمات بر اساس نیاز واقعی مجموعه</li>
+      </ul>
+      <p style="margin-top:16px">این طرح بر راه‌اندازی یک دفتر کوچک و متناسب با امکانات موجود تمرکز دارد و اجرای آن نیازمند ایجاد زیرساخت بزرگ یا تحمیل هزینه‌های سنگین اولیه به سرای محله نیست.</p>
+    </div>
+  </section>
+
+  <section id="s14" class="reveal">
+    <div class="sec-head"><div class="idx">۱۴</div><h2>درخواست رسمی از مدیریت محترم سرای محله</h2></div>
+    <div class="card">
+      <p>با عنایت به اهداف خدماتی، آموزشی و اقتصادی طرح، خواهشمند است دستور فرمایید امکان واگذاری یکی از فضاهای اداری مناسب در سرای محله، با شرایط مالی متناسب با ظرفیت اولیه فعالیت و ماهیت محله‌محور آن، مورد بررسی قرار گیرد.</p>
+      <p>پیشنهاد می‌شود در صورت امکان، شرایط همکاری به‌گونه‌ای تنظیم شود که ضمن رعایت کامل ضوابط و مقررات شهرداری، فرصت لازم برای استقرار، آغاز فعالیت و تثبیت خدمات فراهم باشد.</p>
+      <p>در این راستا، درخواست می‌شود امکان بررسی موارد زیر مورد توجه قرار گیرد:</p>
+      <ul style="list-style:none;padding:0;display:grid;gap:8px;margin-top:12px">
+        <li style="padding:10px 14px;background:var(--surface);border-radius:10px;font-size:13.5px">۱. واگذاری فضای اداری مناسب با اجاره ترجیحی و متناسب با ظرفیت شروع فعالیت.</li>
+        <li style="padding:10px 14px;background:var(--surface);border-radius:10px;font-size:13.5px">۲. بررسی امکان اختصاص مهلت اولیه برای استقرار و آماده‌سازی دفتر، در صورت مجازبودن طبق مقررات.</li>
+        <li style="padding:10px 14px;background:var(--surface);border-radius:10px;font-size:13.5px">۳. تعیین چارچوب مشخص برای همکاری در ارائه خدمات فناوری اطلاعات به سرای محله.</li>
+        <li style="padding:10px 14px;background:var(--surface);border-radius:10px;font-size:13.5px">۴. بررسی امکان معرفی دفتر به شهروندان و اطلاع‌رسانی درباره خدمات و برنامه‌های آموزشی آن.</li>
+        <li style="padding:10px 14px;background:var(--surface);border-radius:10px;font-size:13.5px">۵. تعیین شرایط و ضوابط مربوط به مدت واگذاری، ساعات فعالیت، تعهدات طرفین و نحوه ارزیابی عملکرد.</li>
+      </ul>
+      <p style="margin-top:16px">تأکید می‌شود که جزئیات واگذاری، شرایط مالی و تعهدات طرفین باید مطابق مقررات مربوط و بر اساس توافق رسمی تعیین شود.</p>
+    </div>
+  </section>
+
+  <section id="s15" class="reveal">
+    <div class="sec-head"><div class="idx">۱۵</div><h2>جمع‌بندی و نتیجه‌گیری</h2></div>
+    <div class="card">
+      <p>طرح تأسیس دفتر خدمات فناوری اطلاعات و راهکارهای دیجیتال، پیشنهادی برای ایجاد یک فعالیت تخصصی و پایدار در کنار ارائه خدمات کاربردی به جامعه محلی است.</p>
+      <p>این دفتر با ارائه خدماتی از قبیل طراحی وب‌سایت، توسعه وب‌اپلیکیشن، پشتیبانی شبکه، عیب‌یابی و ارتقای سخت‌افزار، نصب و پیکربندی نرم‌افزار و طراحی گرافیک، می‌تواند بخشی از نیازهای روزمره شهروندان و کسب‌وکارها را پوشش دهد.</p>
+      <p>در کنار این فعالیت‌ها، آمادگی برای ارائه خدمات فنی و مشاوره‌ای به سرای محله، همکاری در زمینه بهبود ابزارهای دیجیتال و مشارکت در برنامه‌های آموزشی مورد توافق، یکی از محورهای مهم این پیشنهاد به شمار می‌رود.</p>
+      <p>ترکیب فعالیت اقتصادی با خدمات عمومی و همکاری با مدیریت شهری، می‌تواند زمینه استفاده بهتر از فضای موجود و ایجاد ارزش برای شهروندان و مجموعه میزبان را فراهم کند.</p>
+      <p>امید است با حمایت مدیریت محترم سرای محله و فراهم‌شدن فضای مناسب، زمینه آغاز این فعالیت و توسعه تدریجی خدمات آن فراهم شود.</p>
+    </div>
+  </section>
+
+  <div class="cta reveal">
+    <h3>آماده آغاز همکاری هستیم</h3>
+    <p>برای بررسی جزئیات، هماهنگی جلسه یا دریافت اطلاعات بیشتر، از راه‌های زیر با ما در تماس باشید.</p>
+    <div class="cta-btns">
+      <a class="btn primary" href="tel:09125907509"><span class="latin-nums">09125907509</span> 📞</a>
+      <a class="btn ghost" href="#s14">مشاهده درخواست رسمی</a>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <div class="sig">محمد خلیلی‌پارسا</div>
+  <div>Parsaco — Digital Solutions</div>
+  <div style="margin-top:6px"><span class="latin-nums">09125907509</span></div>
+  <div style="margin-top:12px;font-size:11px;opacity:.6">تاریخ ارائه: ۴ آبان ۱۴۰۵</div>
+</footer>
+
+<button class="fab" id="fab" aria-label="بازگشت به بالا">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
+</button>
+
+<script>
+(function(){
+  'use strict';
+
+  var menuBtn = document.getElementById('menuBtn');
+  var drawer = document.getElementById('drawer');
+  var overlay = document.getElementById('overlay');
+  var drawerNav = document.getElementById('drawerNav');
+
+  function openMenu(){
+    drawer.classList.add('open');
+    menuBtn.classList.add('open');
+    menuBtn.setAttribute('aria-expanded','true');
+    document.body.style.overflow='hidden';
+  }
+  function closeMenu(){
+    drawer.classList.remove('open');
+    menuBtn.classList.remove('open');
+    menuBtn.setAttribute('aria-expanded','false');
+    document.body.style.overflow='';
+  }
+  menuBtn.addEventListener('click', function(){
+    if(drawer.classList.contains('open')) closeMenu();
+    else openMenu();
+  });
+  overlay.addEventListener('click', closeMenu);
+  drawerNav.addEventListener('click', function(e){
+    if(e.target.closest('a')) closeMenu();
+  });
+  document.addEventListener('keydown', function(e){
+    if(e.key==='Escape' && drawer.classList.contains('open')) closeMenu();
+  });
+
+  var progress = document.getElementById('progress');
+  function updateProgress(){
+    var h = document.documentElement;
+    var st = h.scrollTop || document.body.scrollTop;
+    var sh = h.scrollHeight - h.clientHeight;
+    var p = sh > 0 ? (st/sh)*100 : 0;
+    progress.style.width = p + '%';
+  }
+  window.addEventListener('scroll', updateProgress, {passive:true});
+  updateProgress();
+
+  var fab = document.getElementById('fab');
+  function toggleFab(){
+    if(window.scrollY > 500) fab.classList.add('show');
+    else fab.classList.remove('show');
+  }
+  window.addEventListener('scroll', toggleFab, {passive:true});
+  fab.addEventListener('click', function(){
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+
+  var reveals = document.querySelectorAll('.reveal');
+  if('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(en.isIntersecting){
+          en.target.classList.add('in');
+          io.unobserve(en.target);
+        }
+      });
+    }, {threshold:0.08, rootMargin:'0px 0px -40px 0px'});
+    reveals.forEach(function(el){ io.observe(el); });
+  } else {
+    reveals.forEach(function(el){ el.classList.add('in'); });
+  }
+
+  if('serviceWorker' in navigator){
+    window.addEventListener('load', function(){
+      navigator.serviceWorker.register('./sw.js')
+        .then(function(reg){ console.log('SW registered:', reg.scope); })
+        .catch(function(err){ console.warn('SW registration failed:', err); });
+    });
+  }
+})();
+</script>
+</body>
+</html>
