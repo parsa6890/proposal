@@ -1,4 +1,4 @@
-const CACHE_NAME = 'parsaco-proposal-v3';
+const CACHE_NAME = 'parsaco-proposal-v4';
 const ASSETS = [
   './',
   './index.html',
